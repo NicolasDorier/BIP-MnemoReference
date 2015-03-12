@@ -132,6 +132,6 @@ It results that a SPV Client can decode a mnemonic reference in two ways :
 * By getting the block from the network at the height specified by the mnemonic,
 * By asking the merkleblock + Transaction to a potentially untrusted third party,
 
-In either case, the SPV client do not have to store the full blockchain, and can't be lied by a malicious peer.
+In either case, the SPV client do not have to store the full blockchain, and can't be subject to a replacement attack.
 
 ==Test vectors==
