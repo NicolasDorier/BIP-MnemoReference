@@ -57,7 +57,7 @@ outputIndex takes z bits:
 
 Step5: Calculate the checksum
 
-    rawChecksum = SHA256(SHA256(Concat(blockHash-txIndex-outputIndex-scriptPubKey)))    (I don't know why but Satoshi never used single SHA256)
+    rawChecksum = SHA256(SHA256(Concat(blockHash-txIndex-outputIndex-scriptPubKey)))    (all in little endian)
     (for simplicity, the length of txIndex and outputIndex here is same as those determined in Step 3 and 4 respectively)
     checksum = rawChecksum(11w-1-x-y-z) (the most significant 11w-1-x-y-z bits of rawChecksum)
 
@@ -134,7 +134,7 @@ Step10: Determine the outputIndex
 Step11: Calculate the checksum
 
     Determine the blockHash and scriptPubKey
-    rawChecksum = SHA256(SHA256(Concat(blockHash-txIndex-outputIndex-scriptPubKey)))
+    rawChecksum = SHA256(SHA256(Concat(blockHash-txIndex-outputIndex-scriptPubKey))) (all in little endian)
     checksum = rawChecksum(11w-1-x-y-z)
     If checksum equals to the remaining bits of rawAddress, the address is successfully resolved. Otherwise, return error.
 
