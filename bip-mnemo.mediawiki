@@ -154,3 +154,7 @@ It results that a SPV Client can decode a mnemonic reference in two ways :
 In either case, the SPV client do not have to store the full blockchain, and can't be subject to a replacement attack.
 
 ==Test vectors==
+
+==Reference implementations==
+
+NBitcoin : [https://github.com/NicolasDorier/NBitcoin/blob/master/NBitcoin/MnemonicReference.cs MnemonicReference class]
