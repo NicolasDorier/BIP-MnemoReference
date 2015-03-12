@@ -1,9 +1,9 @@
-BIP: xxxx
+<pre>BIP: xxxx
 Title: Mnemonic code for referencing transaction output in the blockchain
 Authors: Nicolas Dorier, jl2012
 Status: Draft
 Type: Standards Track
-Created: 2015
+Created: 2015</pre>
 
 ==Abstract==
 
