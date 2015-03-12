@@ -157,4 +157,4 @@ In either case, the SPV client do not have to store the full blockchain, and can
 
 ==Reference implementations==
 
-NBitcoin : [https://github.com/NicolasDorier/NBitcoin/blob/master/NBitcoin/MnemonicReference.cs MnemonicReference class]
+NBitcoin (C#): [https://github.com/NicolasDorier/NBitcoin/blob/master/NBitcoin/MnemonicReference.cs MnemonicReference class]
