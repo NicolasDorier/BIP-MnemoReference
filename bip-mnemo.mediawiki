@@ -55,32 +55,31 @@ outputIndex takes z bits:
     If (zmin > z), increase w by 1 and go back to Step 3
 
 
-Step5: Calculate the checksum
+Step5: Calculate the checksum (little endian)
 
-    rawChecksum = SHA256(SHA256(Concat(blockHash-txIndex-outputIndex-scriptPubKey)))    (all in little endian)
-    (for simplicity, the length of txIndex and outputIndex here is same as those determined in Step 3 and 4 respectively)
-    checksum = rawChecksum(11w-1-x-y-z) (the most significant 11w-1-x-y-z bits of rawChecksum)
+    checksum = SHA256(SHA256(blockHash|txIndex|outputIndex|scriptPubKey))
+    cs = 11w-1-x-y-z
 
 
-Step6: Get the rawAddress = Concat(blockHeight-txIndex-outputIndex-checksum)
+Step6: Get the rawAddress, encoded by using the number of bits calculated previously  
 
-Step7: Get the encryptionKey = least significant c bits of rawAddress
+	rawAddress = Encode(blockHeight,x)|Encode(txIndex,y)|Encode(outputIndex,z)|Encode(checksum,cs)
 
-Step8: Get the finalEncryptionKey
+Step7: Get the encryptionKey,  the least significant c bits of rawAddress
 
-    If 11w-1-c =< c, finalEncryptionKey = encryptionKey(11w-1-c)
-    If 2c >= 11w-1-c > c, finalEncryptionKey = Concat(EncryptionKey, EncryptionKey(11w-1-2c))
-    If 3c >= 11w-1-c > 2c, finalEncryptionKey = Concat(EncryptionKey, EncryptionKey, EncryptionKey(11w-1-3c))
+	encryptionKey = Substring(rawAddress, from:rawAddress.Length-c, count:c)
 
-etc
+Step8: Get the encryptedAddress,
 
-Step9: Get the encryptedAddress = XOR(rawAddress(11w-1-c),finalEncryptionKey)
+	encryptedAddress = XOR(Substring(rawAddress,from:0, count:rawAddress.Length-c),encryptionKey)
 
-Step10: Get the finalAddress = Concat(encryptedAddress,encryptionKey,0)
+Step9: Get the finalAddress,
+
+	finalAddress = encryptedAddress|encryptionKey|0
+	
 The last 0 denotes the address version
 
 Step11: Convert finalAddress into mnemonic code following BIP-0039
-
 
 ==Decoding the mnemonic address==
 
@@ -88,55 +87,49 @@ Step1: Determine w = number of words in the mnemonic code
 
 Step2: Convert mnemonic code into finalAddress following BIP-0039
 
-Step3: If the last bit of finalAddress is 0, drop it. If it is 1, return error.
+Step3: Check is the last bit of finalAddress is 0, if not, returns an error
 
-Step4: Get the encryptionKey = least significant c bits of finalAddress
+Step4: Get the encryptionKey
 
-Step5: Get the finalEncryptionKey
+	encryptionKey = Substring(finalAddress,from:finalAddress.Length-1-c, count:c)
 
-    If 11w-1-c =< c, finalEncryptionKey = encryptionKey(11w-1-c)
-    If 2c >= 11w-1-c > c, finalEncryptionKey = Concat(EncryptionKey, EncryptionKey(11w-1-2c))
-    If 3c >= 11w-1-c > 2c, finalEncryptionKey = Concat(EncryptionKey, EncryptionKey, EncryptionKey(11w-1-3c))
+Step5: Get the rawAddress
 
-etc
+	rawAddress = XOR(Substring(finalAddress,from: 0, to: finalAddress.Length - 1 - c) ,encryptionKey)
 
-Step6: Get the decryptedAddress = XOR(finalAddress(11w-1-c),finalEncryptionKey)
-
-Step7: Get the rawAddress = Concat(decryptedAddress, encryptionKey)
-
-Step8: Determine the blockHeight
+Step7: Determine the blockHeight
 
     If the first bit of rawAddress is 0, take the first 21 bit out of rawAddress. This is the blockHeight
     If the first bit of rawAddress is 1, drop it. Take the first 23 bit out of rawAddress. This is the blockHeight
     If the block does not exist, return error
 
-
-Step9: Determine the txIndex
+Step8: Determine the txIndex
 
     Look up the blockchain for the referenced block and determine the total number of transactions in the block
     y1 = ceiling(log(total number of transactions in the block, 2))
     y2 = 11w-1-x-c
     y = min(y1, y2))
-    Take the first y bits out of rawAddress. This is the txIndex
+    txIndex = ToInt(Substring(rawAddress,from:x,count:y))
     If the transaction does not exist, return error
 
 
-Step10: Determine the outputIndex
+Step9: Determine the outputIndex
 
     Look up the referenced transaction and determine the total number of outputs in the transaction
     z1 = ceiling(log(total number of outputs in the transaction, 2))
     z2 = 11w-1-x-y-c
     z = min(z1, z2)
-    Take the first z bits out of rawAddress. This is the outputIndex
+    outputIndex = ToInt(Substring(rawAddress, from:x+y,count:z))
     If the output does not exist, return error
 
 
-Step11: Calculate the checksum
+Step10: Calculate the checksum
 
     Determine the blockHash and scriptPubKey
-    rawChecksum = SHA256(SHA256(Concat(blockHash-txIndex-outputIndex-scriptPubKey))) (all in little endian)
-    checksum = rawChecksum(11w-1-x-y-z)
-    If checksum equals to the remaining bits of rawAddress, the address is successfully resolved. Otherwise, return error.
+    checksum = SHA256(SHA256(Concat(blockHash-txIndex-outputIndex-scriptPubKey))) (all in little endian)
+	cs = rawAddress.Length - x - y - z;
+	valid = Substring(checksum,from:0,count:cs) == Substring(rawAddress,from:x + y + z, count:cs)
+    If valid, the address is successfully resolved. Otherwise, return error.
 
 
 ==SPV client compatibility==
