@@ -8,8 +8,18 @@ Created: 2015
 ==Abstract==
 
 This BIP describes the implementation of a mnemonic code for referencing any transaction output in the blockchain.
+It proposes several improvements over firstbits, like SPV compatibility, ease of memorization, and checksum.
 
 ==Motivation==
+
+The scheme allows anyone to keep in his memory a reference to any block/transaction/output in the blockchain.
+It also permit to transfer such information by voice over the phone easily.
+
+Some potential use case are:
+
+* Remembering its own bitcoin address (as everybody knows his own phone number)
+* Remembering any payment url (BIP70), by publishing it on the blockchain and referencing it (in an OP_RETURN)
+* Remembering its own Stealth Address (published in OP_RETURN)
 
 ==Generating the mnemonic address==
 
