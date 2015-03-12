@@ -42,7 +42,7 @@ txIndex takes y bits:
 
     y1 = ceiling(log(total number of transactions in the block, 2))
     y2 = 11w-1-x-c
-    y = min(y1, y2))
+    y = min(y1, y2)
     If (ymin > y), increase w by 1 and go back to Step 3 (This condition is not possible as the initial value of w must provide enough space for ymin)
 
 
@@ -126,7 +126,7 @@ Step10: Determine the outputIndex
     Look up the referenced transaction and determine the total number of outputs in the transaction
     z1 = ceiling(log(total number of outputs in the transaction, 2))
     z2 = 11w-1-x-y-c
-    z = min(z1, z2))
+    z = min(z1, z2)
     Take the first z bits out of rawAddress. This is the outputIndex
     If the output does not exist, return error
 
