@@ -121,7 +121,7 @@ Step7: Determine the txIndex and y
     Look up the blockchain for the referenced block and determine the total number of transactions in the block
     y1 = ceiling(log(total number of transactions in the block, 2))
     y2 = 11w-1-x-c
-    y = min(y1, y2))
+    y = min(y1, y2)
     txIndex = Decode(Substring(rawAddress,from:x,count:y))
     If the transaction does not exist, return error
 
