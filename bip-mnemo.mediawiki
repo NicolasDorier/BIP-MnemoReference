@@ -26,20 +26,28 @@ Some potential use case are:
 Definitions:
 
 Decode/Encode functions encode and decode integers in little endian
+
 blockHeight: the height of the referenced block. Genesis block is 0
+
 blockHash: the hash of the referenced block
+
 txIndex: index of the referenced transaction in the block. Index of the first transaction in a block is 0
+
 outputIndex: index of the referenced output in the transaction. Index of the first output in a transaction is 0
+
 scriptPubKey: the scriptPubKey of the referenced output
+
 c: a fixed integer, the minimal number of bits for checksum (to be defined later)
+
 ymin = ceiling(log(txIndex + 1, 2))
+
 zmin = ceiling(log(outputIndex + 1, 2))
 
 Step1: Get encodedBlockHeight, and its number of bits, x:
 
     if(blockHeight =< 1,048,575)
-        x = 22 
-        encodedBlockHeight = 0|Encode(blockHeight,21)
+        x = 21 
+        encodedBlockHeight = 0|Encode(blockHeight,20)
     if(1,048,575 < blockHeight && blockHeight <= 8,388,607)
         x = 24
         encodedBlockHeight = 1|Encode(blockHeight,23)
